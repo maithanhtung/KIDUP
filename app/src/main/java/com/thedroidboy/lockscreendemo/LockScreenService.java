@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 
 /**
@@ -23,6 +25,7 @@ public class LockScreenService extends Service implements View.OnClickListener {
     private LinearLayout linearLayout;
     private WindowManager.LayoutParams layoutParams;
     private WindowManager windowManager;
+
 
 
     @Override
@@ -45,7 +48,12 @@ public class LockScreenService extends Service implements View.OnClickListener {
                         | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION,// hiding the home screen button
                 PixelFormat.TRANSLUCENT);
+        Log.d("steps LS",String.valueOf(MainActivity.steps));
+
+
     }
+
+
 
     private void init() {
         linearLayout = new LinearLayout(this);
@@ -53,10 +61,36 @@ public class LockScreenService extends Service implements View.OnClickListener {
         ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.lock_screen, linearLayout);
         View btnClose = linearLayout.findViewById(R.id.btn_close);
         btnClose.setOnClickListener(this);
+        View btnEarnTime = linearLayout.findViewById(R.id.btnFinish);
+//        btnEarnTime.setOnClickListener(this);
+
+        btnEarnTime.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+
+                Log.d("working", "earn");
+                Log.d("steps LSbtn",String.valueOf(MainActivity.steps));
+                MainActivity.timeGot = MainActivity.steps *  1000;
+                MainActivity.timeLeft = MainActivity.timeLeft + MainActivity.timeGot;
+
+
+                MainActivity.lastCount = MainActivity.lastCount + MainActivity.steps;
+                MainActivity.steps = 0;
+
+                Log.d("steps after LSbtn",String.valueOf(MainActivity.steps));
+                Log.d("timegot after LSbtn",String.valueOf(MainActivity.timeGot));
+                Log.d("timeleft after LSbtn",String.valueOf(MainActivity.timeLeft));
+                Log.d("lastcount after LSbtn",String.valueOf(MainActivity.lastCount));
+            }
+        });
     }
 
     @Override
     public void onClick(View view) {
+
+
+        MainActivity.startTimer();
+
         windowManager.removeView(linearLayout);
         linearLayout = null;
     }

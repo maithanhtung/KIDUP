@@ -21,6 +21,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,8 +47,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 //    Button enable;
 
-    DevicePolicyManager deviceManager;
-    ComponentName compName;
+    public static DevicePolicyManager deviceManager;
+    public static ComponentName compName;
     ActivityManager activityManager;
     static final int RESULT_ENABLE = 1;
 
@@ -53,19 +58,21 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     TextView tv_steps;
 
-    TextView textViewTime;
+    public static TextView textViewTime;
 
     boolean running = false;
 
-    float steps = 0;
-    float lastCount = 0;
-    float timeLeft = 0;
+    public static float steps = 0;
+    float stepsInSensor = -1;
+    public static float lastCount = 0;
+    public static float timeLeft = 0;
     boolean timer_was_touched = false;
-    float timeGot = 0;
+    public static float timeGot = 0;
 
     float timePause = 0;
 
-    CounterClass timer = new CounterClass(0, 1000);
+
+    public static CounterClass timer = new CounterClass(0, 1000);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +105,11 @@ public class MainActivity extends Activity implements SensorEventListener {
         tv_steps = (TextView) findViewById(R.id.tv_steps);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+
+        Log.d("last count",String.valueOf(lastCount));
+        Log.d("Timeleft", String.valueOf(timeLeft));
+        Log.d("Steps", String.valueOf(steps));
 
         btnLock.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -136,8 +148,11 @@ public class MainActivity extends Activity implements SensorEventListener {
             @Override
             public void onClick(View v){
 
+                Log.d("last count BC",String.valueOf(lastCount));
+                Log.d("Timeleft BC", String.valueOf(timeLeft));
+                Log.d("Steps BC", String.valueOf(steps));
 
-                timeGot = steps *  100;
+                timeGot = steps *  1000;
                 timeLeft = timeLeft + timeGot;
 
 
@@ -190,7 +205,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @SuppressLint("NewApi")
-    public class CounterClass extends CountDownTimer {
+    public static class CounterClass extends CountDownTimer {
 
         public CounterClass(long millisInFuture, long countDownInterval){
             super(millisInFuture, countDownInterval);
@@ -211,25 +226,35 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 
             textViewTime.setText("Out of time!");
-//            boolean active = deviceManager.isAdminActive(compName);
-//            if (active) {
-//                deviceManager.lockNow();
-//            }
+            boolean active = deviceManager.isAdminActive(compName);
+            if (active) {
+                deviceManager.lockNow();
+            }
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        timer = new CounterClass((long)timePause,1000 );
+        tv_steps.setText(String.valueOf(steps));
 
+        long millis = (long) timeLeft;
 
-        timer.start();
-        timer_was_touched = true;
-        timeGot= 0;
-        timePause = 0;
+        String hms = String.format("%02d:%02d:%02d" , TimeUnit.MILLISECONDS.toHours(millis),TimeUnit.MILLISECONDS.toMinutes(millis)-TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)) );
+        textViewTime.setText(hms);
+        Log.d("millis after unlock",String.valueOf(millis));
+        Log.d("hms",hms);
+
+//        timer = new CounterClass((long)timePause,1000 );
+//        timer.start();
+//        timer_was_touched = true;
+//        timeGot= 0;
+//        timePause = 0;
         running = true;
 
+        Log.d("last count OR",String.valueOf(lastCount));
+        Log.d("Timeleft OR", String.valueOf(timeLeft));
+        Log.d("Steps OR", String.valueOf(steps));
 
         Sensor countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         if (countSensor != null){
@@ -246,21 +271,48 @@ public class MainActivity extends Activity implements SensorEventListener {
     protected void onPause() {
         super.onPause();
 
+
         timePause = timeLeft;
-        timer.cancel();
-        running = false;
+//        timer.cancel();
+        running = true;
+        Log.d("running OP",String.valueOf(running));
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if(running){
-            steps = event.values[0] - lastCount;
-            tv_steps.setText(String.valueOf(steps));
+        if(stepsInSensor == -1){
+            Log.d("event SC",String.valueOf(event.values[0]));
+            stepsInSensor = event.values[0];
         }
+
+        Log.d("running SC",String.valueOf(running));
+
+        if(running){
+            steps = event.values[0] - lastCount - stepsInSensor;
+            tv_steps.setText(String.valueOf(steps));
+
+            Log.d("event SC",String.valueOf(event.values[0]));
+            Log.d("last count SC",String.valueOf(lastCount));
+            Log.d("timeLeft SC", String.valueOf(timeLeft));
+            Log.d("Steps SC", String.valueOf(steps));
+
+
+
+        }
+
+
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
+    public static void startTimer(){
+        Log.d("timer ",String.valueOf(timeLeft));
+        timer = new CounterClass((long)timeLeft,1000 );
+        timer.start();
+
+    }
+
 }
