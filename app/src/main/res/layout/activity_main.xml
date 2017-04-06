@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="30px"
+    android:paddingLeft="30px"
+    android:paddingRight="30px"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:paddingTop="27px"
+    tools:context="com.thedroidboy.lockscreendemo.MainActivity"
+    android:weightSum="1">
+
+    <TextView
+        android:text="Steps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_info"/>
+
+    <TextView
+        android:text="0"
+        android:textSize="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:id="@+id/tv_steps"/>
+
+    <TextView
+        android:textSize="25sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewTime" />
+
+    <Button
+        android:text="Earn time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnFinish" />
+
+    <Button
+        android:text="Lock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnLock"
+        android:layout_weight="0.04" />
+
+
+
+
+</LinearLayout>
+
