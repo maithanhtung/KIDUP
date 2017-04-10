@@ -21,16 +21,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.apache.commons.io.FileUtils;
+
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+
 /**
- * Created by Yaakov Shahak on 14/12/2016.
+ * Created by t3math00 on 4/5/2017.
  */
+
 
 public class MainActivity extends Activity implements SensorEventListener {
 //
@@ -66,7 +68,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     float stepsInSensor = -1;
     public static float lastCount = 0;
     public static float timeLeft = 0;
-    boolean timer_was_touched = false;
+//    public static boolean timer_was_touched = false;
     public static float timeGot = 0;
 
     float timePause = 0;
@@ -152,26 +154,33 @@ public class MainActivity extends Activity implements SensorEventListener {
                 Log.d("Timeleft BC", String.valueOf(timeLeft));
                 Log.d("Steps BC", String.valueOf(steps));
 
-                timeGot = steps *  1000;
+                timeGot = steps *  10000;
                 timeLeft = timeLeft + timeGot;
 
 
-                if(!timer_was_touched){
-                    timer = new CounterClass((long)timeLeft,1000 );
+//                if(!timer_was_touched){
+//                    timer.cancel();
+//                    timer = new CounterClass((long)timeLeft,1000 );
+//
+//
+//                    timer.start();
+//                    timer_was_touched = true;
+//                    timeGot= 0;
+//                }
+//                else{
+//                    timer.cancel();
+//                    timer = new CounterClass((long)timeLeft,1000);
+//
+//                    timer.start();
+//                    timer_was_touched = true;
+//                    timeGot= 0;
+//                }
+                timer.cancel();
+                timer = new CounterClass((long)timeLeft,1000);
 
-
-                    timer.start();
-                    timer_was_touched = true;
-                    timeGot= 0;
-                }
-                else{
-                    timer.cancel();
-                    timer = new CounterClass((long)timeLeft,1000);
-
-                    timer.start();
-                    timer_was_touched = true;
-                    timeGot= 0;
-                }
+                timer.start();
+//                timer_was_touched = true;
+                timeGot= 0;
                 lastCount = lastCount + steps;
                 tv_steps.setText("0");
                 steps = 0;
@@ -310,6 +319,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     public static void startTimer(){
         Log.d("timer ",String.valueOf(timeLeft));
+//        timer_was_touched = true;
         timer = new CounterClass((long)timeLeft,1000 );
         timer.start();
 

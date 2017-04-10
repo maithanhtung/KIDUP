@@ -1,8 +1,10 @@
 package com.thedroidboy.lockscreendemo;
 
+import android.app.AlertDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.PixelFormat;
@@ -14,10 +16,10 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-
 /**
- * Created by Yaakov Shahak on 14/12/2016.
+ * Created by t3math00 on 4/5/2017.
  */
+
 
 public class LockScreenService extends Service implements View.OnClickListener {
 
@@ -70,7 +72,7 @@ public class LockScreenService extends Service implements View.OnClickListener {
 
                 Log.d("working", "earn");
                 Log.d("steps LSbtn",String.valueOf(MainActivity.steps));
-                MainActivity.timeGot = MainActivity.steps *  1000;
+                MainActivity.timeGot = MainActivity.steps *  10000;
                 MainActivity.timeLeft = MainActivity.timeLeft + MainActivity.timeGot;
 
 
@@ -88,11 +90,25 @@ public class LockScreenService extends Service implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
+//        if(MainActivity.timeLeft == 0) {
+//            AlertDialog alertDialog = new AlertDialog.Builder(LockScreenService.this).create();
+//            alertDialog.setTitle("Alert");
+//            alertDialog.setMessage("Alert message to be shown");
+//            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+//                    new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.dismiss();
+//                        }
+//                    });
+//            alertDialog.show();
+//        }
+        if (MainActivity.timeLeft >0 ){
 
-        MainActivity.startTimer();
+            MainActivity.startTimer();
 
-        windowManager.removeView(linearLayout);
-        linearLayout = null;
+            windowManager.removeView(linearLayout);
+            linearLayout = null;
+        }
     }
 
     @Override
